@@ -31,7 +31,42 @@
         } else {
             method_exchangeImplementations(originalMethod, swizzledMethod);
         }
+        
+        //Swizzle openURL: method
+        originalSelector = @selector(application:openURL:sourceApplication:annotation:);
+        swizzledSelector = @selector(identity_application:openURL:sourceApplication:annotation:);
+        
+        originalMethod = class_getInstanceMethod(class, originalSelector);
+        swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+        
+        didAddMethod =
+        class_addMethod(class,
+                        originalSelector,
+                        method_getImplementation(swizzledMethod),
+                        method_getTypeEncoding(swizzledMethod));
+        
+        if (didAddMethod) {
+            class_replaceMethod(class,
+                                swizzledSelector,
+                                method_getImplementation(originalMethod),
+                                method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
     });
+}
+
+- (BOOL)identity_application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    //Handle first launch dynamic links
+    FIRDynamicLink* dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
+    if(dynamicLink != nil){
+        FirebaseDynamicLinksPlugin* dl = [self.viewController getCommandInstance:@"FirebaseDynamicLinks"];
+        [dl postDynamicLink:dynamicLink];
+        
+        return YES;
+    }else{
+        return [self identity_application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+    }
 }
 
 // [START continueuseractivity]
