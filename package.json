@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "Cordova plugin for Firebase Dynamic Links",
   "cordova": {
-    "id": "cordova-plugin-firebase-dynamiclinks2",
+    "id": "cordova-plugin-firebase-dynamiclinks",
     "platforms": [
       "ios",
       "android"
