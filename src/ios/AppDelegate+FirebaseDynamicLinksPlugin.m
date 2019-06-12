@@ -59,7 +59,7 @@
 - (BOOL)identity_application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     //Handle first launch dynamic links
     FIRDynamicLink* dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
-    if(dynamicLink != nil){
+    if(dynamicLink != nil && dynamicLink.url != nil){
         FirebaseDynamicLinksPlugin* dl = [self.viewController getCommandInstance:@"FirebaseDynamicLinks"];
         [dl postDynamicLink:dynamicLink];
         
